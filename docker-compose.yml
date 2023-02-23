@@ -1,9 +1,19 @@
 version: '2'
 
+networks:
+  default-network:
+    driver: bridge
+
 services: 
   project:
     image: crowdcomms/django-test:latest
     build: .
     volumes: 
       - .:/tmp/myapp
-      
+    ports:
+      - "80:8000"
+    container_name: crowdcomms
+    networks:
+      - default-network
+    command:
+      "python ./manage.py runserver 0.0.0.0:8000"
