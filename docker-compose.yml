@@ -9,7 +9,7 @@ services:
     image: crowdcomms/django-test:latest
     build: .
     volumes: 
-      - .:/tmp/myapp
+      - .:/opt/app
     ports:
       - "80:8000"
     container_name: crowdcomms
