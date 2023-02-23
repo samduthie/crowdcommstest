@@ -13,6 +13,12 @@ class RabbitHoleViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, RabbitHolePermissions)
     queryset = RabbitHole.objects.all()
 
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return RabbitHole.objects.all()
+        else:
+            return RabbitHole.objects.filter(owner=self.request.user)
+
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
 
