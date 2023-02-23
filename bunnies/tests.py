@@ -62,7 +62,7 @@ class RabbitHolesTests(APITestCase):
 
         response = self.client.get(f'/rabbitholes/{hole.id}/')
 
-        assert response.status_code == 200
+        self.assertEqual(response.status_code, 200)
 
         self.assertEqual(len(response.data.get('bunnies')), 3)
         self.assertEqual(response.data.get('bunny_count'), 3)

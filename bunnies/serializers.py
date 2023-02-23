@@ -28,8 +28,12 @@ class BunnySerializer(serializers.ModelSerializer):
         family_members = Bunny.objects.filter(home__location=location).exclude(id=obj.id).values_list('name', flat=True)
         return family_members
 
-    def validate(self, attrs):
-        return attrs
+    def validate(self, data):
+        home = data.get('home')
+        if home and home.bunnies.count() >= home.bunnies_limit:
+            raise serializers.ValidationError(
+                f"Cannot exceed the limit of {home.bunnies_limit} bunnies in the rabbithole.")
+        return data
 
     class Meta:
         model = Bunny
