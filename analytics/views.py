@@ -1,10 +1,15 @@
 from datetime import datetime
 
 from django.utils import timezone
+from django.db.models import F
 
 # Create your views here.
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+
+from analytics.models import UserVisit
 
 
 class HelloWorld(APIView):
@@ -14,12 +19,22 @@ class HelloWorld(APIView):
     """
 
     def get(self, request, format=None):
+        user = request.user if request.user.is_authenticated else None
+        user_visit, created = UserVisit.objects.update_or_create(user=user)
+
+        user_visit.visits = F('visits') + 1
+        user_visit.save()
+
+
         data = {
             'version': 1.0,
             'time': timezone.now(),
-            'recent_visitors': 0,
-            'all_visitors': 0,
-            'all_visits': 0,
+            'recent_visitors': '',
+            'all_visitors': UserVisit.objects.values('user').distinct().count(),
+            'all_visits': UserVisit.objects.count(),
         }
+
+
+
         return Response(data)
 
